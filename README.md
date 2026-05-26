@@ -1,7 +1,5 @@
 ﻿# IT Shop — каркас по ТЗ (Angular + Go + PostgreSQL + MinIO)
 
-Отдельный контур от текущего Gatekeeper (`gatekeeper-frontend/` + Python backend). Сценарии переносятся сюда поэтапно.
-
 ## Структура
 
 ```text
@@ -52,6 +50,3 @@ go run ./cmd/api
 - Approvals: inbox, approve/reject/delegate
 - Audit: `GET /api/audit`
 - Attachments: upload + presigned URL через MinIO
-- Internal mock: IAM (`/internal/iam/user`) и rule-based AI (`/internal/ai/analyze`)
-
-Подробнее о целевой архитектуре: [`../docs/architecture.md`](../docs/architecture.md).
