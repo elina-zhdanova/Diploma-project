@@ -42,7 +42,7 @@ cd itshop/backend
 go run ./cmd/api
 ```
 
-## Что уже перенесено
+## Что уже есть
 
 - JWT auth: `POST /api/auth/login`, `GET /api/auth/me`
 - Catalog: `GET /api/systems`, `GET /api/resources`, `GET /api/access-roles`
