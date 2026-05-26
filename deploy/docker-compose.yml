@@ -1,0 +1,94 @@
+﻿# IT Shop — стек из ТЗ: API (Go), PostgreSQL, MinIO.
+# Запуск из каталога deploy: docker compose up -d --build
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: itshop_postgres
+    environment:
+      POSTGRES_USER: itshop
+      POSTGRES_PASSWORD: itshop
+      POSTGRES_DB: itshop
+    ports:
+      - "5433:5432"
+    volumes:
+      - itshop_pgdata:/var/lib/postgresql/data
+      - ../backend/migrations/000001_init_schema.up.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ../backend/migrations/000002_users_password_attachments.up.sql:/docker-entrypoint-initdb.d/02_extend.sql:ro
+      - ../backend/migrations/000003_seed_demo.up.sql:/docker-entrypoint-initdb.d/03_seed.sql:ro
+      - ../backend/migrations/000004_bulk_test_roles.up.sql:/docker-entrypoint-initdb.d/04_bulk_roles.sql:ro
+      - ../backend/migrations/000005_fix_demo_user_names.up.sql:/docker-entrypoint-initdb.d/05_fix_demo_names.sql:ro
+      - ../backend/internal/dbschema/embedded/000006_expand_catalog.up.sql:/docker-entrypoint-initdb.d/06_expand_catalog.sql:ro
+      - ../backend/internal/dbschema/embedded/000007_repair_utf8_catalog.up.sql:/docker-entrypoint-initdb.d/07_repair_utf8.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itshop -d itshop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - itshop_net
+
+  minio:
+    image: minio/minio:latest
+    container_name: itshop_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - itshop_minio:/data
+    networks:
+      - itshop_net
+
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: itshop_api
+    environment:
+      HTTP_PORT: "8080"
+      DATABASE_URL: postgres://itshop:itshop@postgres:5432/itshop?sslmode=disable
+      JWT_SECRET: dev-itshop-jwt-change-in-production
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      S3_BUCKET: itshop-attachments
+      S3_USE_SSL: "false"
+      CORS_ALLOW_ORIGIN: "*"
+      IAM_MOCK: "true"
+      AI_MOCK: "true"
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - itshop_net
+
+  web:
+    build:
+      context: ../frontend/web
+      dockerfile: Dockerfile
+    container_name: itshop_web
+    environment:
+      ITSHOP_API_PROXY: http://api:8080
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+    networks:
+      - itshop_net
+
+volumes:
+  itshop_pgdata:
+  itshop_minio:
+
+networks:
+  itshop_net:
+    driver: bridge
+

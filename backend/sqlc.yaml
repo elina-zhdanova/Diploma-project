@@ -1,0 +1,18 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema:
+      - "migrations/000001_init_schema.up.sql"
+      - "migrations/000002_users_password_attachments.up.sql"
+      - "migrations/000008_access_role_approvers.up.sql"
+      - "migrations/000009_request_needed_until.up.sql"
+      - "migrations/000010_delegation_scope.up.sql"
+      - "migrations/000011_request_item_justification.up.sql"
+    queries: "internal/store/queries"
+    gen:
+      go:
+        package: "store"
+        out: "internal/store"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_empty_slices: true

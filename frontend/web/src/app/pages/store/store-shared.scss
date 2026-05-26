@@ -1,0 +1,82 @@
+/* Общие стили тулбара каталога (системы и роли в системе) */
+.store-filter-systems-section {
+  margin-bottom: 1.35rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--gk-zinc-700);
+  border-radius: 0.65rem;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.store-filter-text-block {
+  margin-bottom: 0.75rem;
+}
+
+.store-toolbar-footnote {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.store-systems-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  padding: 0;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.store-system-card {
+  padding: 1.15rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 6rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: var(--gk-zinc-500);
+  }
+}
+
+.store-system-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.store-system-meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gk-zinc-400);
+}
+
+.store-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.store-breadcrumb a {
+  color: var(--gk-accent);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.store-breadcrumb-sep {
+  color: var(--gk-zinc-500);
+  user-select: none;
+}

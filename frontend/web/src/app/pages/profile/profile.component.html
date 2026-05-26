@@ -1,0 +1,58 @@
+<div class="gk-page profile-page">
+  <header class="gk-page-header-strip">
+    <p class="gk-eyebrow">Профиль</p>
+    <h1 class="gk-page-title">Личный кабинет</h1>
+    <p class="gk-muted" style="margin: 0">Данные учётной записи загружаются через <code>/api/auth/me</code> (JWT).</p>
+  </header>
+
+  @if (auth.user(); as u) {
+    <div class="gk-filters-card profile-card">
+      <div class="profile-row">
+        <div class="profile-avatar" aria-hidden="true">{{ u.full_name.charAt(0).toUpperCase() }}</div>
+        <div>
+          <h2 class="profile-name">{{ u.full_name }}</h2>
+          <p class="gk-muted" style="margin: 0.25rem 0 0">{{ '@' + u.login }}</p>
+          @if (u.email) {
+            <p class="gk-muted" style="margin: 0.35rem 0 0">{{ u.email }}</p>
+          }
+        </div>
+      </div>
+      <div class="profile-section">
+        <span class="gk-label">Роли</span>
+        @if (u.roles.length) {
+          <div class="gk-tag-row">
+            @for (r of u.roles; track r) {
+              <span class="gk-tag gk-tag-accent">{{ r }}</span>
+            }
+          </div>
+        } @else {
+          <p class="gk-muted" style="margin: 0">Роли не назначены.</p>
+        }
+      </div>
+      <div class="profile-section">
+        <span class="gk-label">Интеграция</span>
+        <p class="gk-muted profile-integration">
+          @if (u.iam_catalog_emulated === false) {
+            Источник пользователей: <strong>внешний</strong> контур (IAM).
+          } @else {
+            Учётные записи и атрибуты: <strong>эмуляция</strong> корпоративного каталога (локальная БД / IAM_MOCK).
+          }
+        </p>
+        <p class="gk-muted profile-integration" style="margin-top: 0.5rem">
+          @if (u.ai_rules_emulated === false) {
+            Оценка риска: подключаемый анализатор (внешний сервис).
+          } @else {
+            Оценка риска заявок: <strong>встроенные правила</strong> по справочнику ролей (AI_MOCK).
+          }
+        </p>
+      </div>
+      <p class="gk-muted" style="margin: 1.5rem 0 0">
+        <a routerLink="/store" class="profile-link">Перейти в каталог</a>
+        ·
+        <a routerLink="/requests" class="profile-link">Мои заявки</a>
+      </p>
+    </div>
+  } @else {
+    <div class="gk-empty">Профиль не загружен. Выйдите и войдите снова.</div>
+  }
+</div>

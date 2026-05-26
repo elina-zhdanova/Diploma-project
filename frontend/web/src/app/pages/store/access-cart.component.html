@@ -1,0 +1,83 @@
+<div class="gk-page store-page access-cart-page">
+  <nav class="store-breadcrumb" aria-label="Навигация по каталогу">
+    <a routerLink="/store">Информационные системы</a>
+    <span class="store-breadcrumb-sep">/</span>
+    <span class="gk-muted">Корзина</span>
+  </nav>
+
+  <header class="gk-page-header-strip">
+    <p class="gk-eyebrow">Каталог доступов</p>
+    <h1 class="gk-page-title">Корзина заявки</h1>
+    <p class="gk-muted" style="margin: 0">
+      Для каждой роли — своё обоснование. По кнопке «Отправить заявку» для каждой позиции создаётся отдельная заявка в «Мои заявки» (с тем же сроком «нужен до», если он указан).
+    </p>
+  </header>
+
+  @if (cart.items().length === 0) {
+    <div class="gk-empty access-cart-empty">
+      <p>Пока пусто. Откройте <a routerLink="/store" class="access-cart-empty-link">каталог</a> и нажмите «В корзину» у нужных ролей.</p>
+    </div>
+  } @else {
+    <div class="gk-filters-card access-cart-list-card">
+      <h2 class="gk-filters-title">Выбранные роли ({{ cart.items().length }})</h2>
+      <ul class="access-cart-lines" role="list">
+        @for (line of cart.items(); track line.accessRoleId) {
+          <li class="access-cart-line" role="listitem">
+            <div class="access-cart-line-head">
+              <div class="access-cart-line-main">
+                <a [routerLink]="['/store', line.accessRoleId]" class="access-cart-line-name">{{ line.name }}</a>
+                <span class="access-cart-line-meta">{{ line.systemName }} · {{ line.resourceName }}</span>
+              </div>
+              <button type="button" class="gk-btn-ghost access-cart-remove" (click)="remove(line.accessRoleId)" [disabled]="submitting">
+                Убрать
+              </button>
+            </div>
+            <label class="gk-label access-cart-line-j-label" [attr.for]="'cart-j-' + line.accessRoleId">Обоснование</label>
+            <textarea
+              [id]="'cart-j-' + line.accessRoleId"
+              class="gk-textarea access-cart-line-j"
+              rows="3"
+              [name]="'cj' + line.accessRoleId"
+              [ngModel]="line.justification"
+              (ngModelChange)="cart.setJustification(line.accessRoleId, $event)"
+              [disabled]="submitting"
+              placeholder="Зачем нужен доступ по этой роли…"
+            ></textarea>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="gk-filters-card access-cart-form-card">
+      <h2 class="gk-filters-title">Срок доступа</h2>
+      <div class="gk-access-date-block">
+        <label class="gk-access-date-check">
+          <input type="checkbox" [(ngModel)]="limitAccessByDate" name="cartlim" [disabled]="submitting" />
+          <span>Нужен доступ ограниченное время — указать дату, до которой он требуется (включительно)</span>
+        </label>
+        @if (limitAccessByDate) {
+          <label class="gk-field" for="cart-nd">
+            <span>Нужен до</span>
+            <input id="cart-nd" type="date" class="gk-input" name="cartnd" [(ngModel)]="neededUntil" [min]="minNeededUntil" [disabled]="submitting" />
+          </label>
+        }
+      </div>
+
+      @if (error) {
+        <div class="gk-alert-error" style="margin-top: 1rem">{{ error }}</div>
+      }
+
+      <div class="gk-btn-row access-cart-actions">
+        <button
+          type="button"
+          class="gk-btn-primary"
+          [disabled]="submitting || !allLinesHaveJustification()"
+          (click)="submit()"
+        >
+          {{ submitting ? 'Отправка…' : 'Отправить заявку' }}
+        </button>
+        <a routerLink="/store" class="gk-btn-ghost">Продолжить выбор в каталоге</a>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,127 @@
+<div class="gk-page store-page">
+  @if (system) {
+    <nav class="store-breadcrumb" aria-label="Навигация по каталогу">
+      <a routerLink="/store">Информационные системы</a>
+      <span class="store-breadcrumb-sep">/</span>
+      <span class="gk-muted">{{ system.name }}</span>
+    </nav>
+  }
+
+  <header class="gk-page-header-strip">
+    <p class="gk-eyebrow">Каталог доступов</p>
+    <h1 class="gk-page-title">{{ system?.name ?? 'Загрузка…' }}</h1>
+    <div class="gk-badge-count">
+      @if (loading) {
+        Загрузка…
+      } @else {
+        Ролей в списке: {{ filteredRoles.length }}
+      }
+    </div>
+  </header>
+
+  @if (error) {
+    <div class="gk-alert-error">{{ error }}</div>
+  }
+
+  @if (!loading && system) {
+    <section class="gk-filters-card store-toolbar">
+      <h2 class="gk-filters-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        Поиск по ролям
+      </h2>
+
+      <div class="store-filter-text-block">
+        <label class="gk-label" for="store-q-roles">Текстовый поиск</label>
+        <div class="gk-input-search-wrap">
+          <svg class="gk-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            id="store-q-roles"
+            class="gk-input"
+            type="search"
+            [ngModel]="ui.searchQuery()"
+            (ngModelChange)="ui.setSearch($event)"
+            name="q"
+            placeholder="Название роли, ресурс, описание…"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <p class="gk-muted store-toolbar-footnote">
+        Тот же поиск, что на экране систем — значение сохраняется. Фильтр по системе задан переходом в эту ИС.
+      </p>
+    </section>
+  }
+
+  @if (loading) {
+    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 2rem 0">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка…</span>
+    </div>
+  } @else if (system && filteredRoles.length === 0) {
+    <div class="gk-empty">Ничего не найдено. Измените поисковый запрос.</div>
+  } @else if (system) {
+    <ul class="store-role-list" role="list">
+      @for (row of filteredRoles; track row.id) {
+        <li class="store-role-list__item" role="listitem">
+          <div class="store-role-list__row">
+            <a [routerLink]="['/store', row.id]" class="store-role-list__link">
+              <div class="store-role-list__main">
+                <span class="store-role-list__name">{{ row.name }}</span>
+                <span class="store-role-list__meta">{{ row.systemName }} · {{ row.resourceName }}</span>
+                @if (row.description) {
+                  <p class="store-role-list__desc">{{ row.description }}</p>
+                }
+              </div>
+              <div class="store-role-list__aside">
+                <div class="store-role-list__tags">
+                  <span [class]="riskTagClass(row.risk_level)">{{ row.risk_level }}</span>
+                  @if (row.sensitive) {
+                    <span class="gk-tag gk-tag-risk-high">чувствительный ресурс</span>
+                  }
+                </div>
+                <span class="store-role-list__hint" aria-hidden="true">Подробнее →</span>
+              </div>
+            </a>
+            @if (inCart(row.id)) {
+              <span class="store-role-cart-badge">В корзине</span>
+            } @else {
+              <button type="button" class="gk-btn-ghost store-role-cart-btn" (click)="openCartDialog(row, $event)">В корзину</button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (cartDialogRow) {
+    <div class="store-cart-dialog-backdrop" (click)="closeCartDialog()"></div>
+    <div class="store-cart-dialog" role="dialog" aria-modal="true" aria-labelledby="store-cart-dlg-title">
+      <h2 id="store-cart-dlg-title" class="store-cart-dialog-title">Обоснование для «{{ cartDialogRow.name }}»</h2>
+      <p class="gk-muted" style="margin: 0 0 0.75rem; font-size: 0.875rem">
+        Укажите, зачем нужен доступ по этой роли — текст попадёт в заявку по этой позиции.
+      </p>
+      <label class="gk-label" for="store-cart-j">Обоснование</label>
+      <textarea
+        id="store-cart-j"
+        class="gk-textarea"
+        name="storeCartJ"
+        rows="4"
+        [(ngModel)]="cartJustificationDraft"
+        placeholder="Например: задача в проекте X, срок до …"
+      ></textarea>
+      <div class="store-cart-dialog-actions">
+        <button type="button" class="gk-btn-primary" [disabled]="!cartJustificationDraft.trim()" (click)="confirmCartDialog()">
+          Добавить в корзину
+        </button>
+        <button type="button" class="gk-btn-ghost" (click)="closeCartDialog()">Отмена</button>
+      </div>
+    </div>
+  }
+</div>

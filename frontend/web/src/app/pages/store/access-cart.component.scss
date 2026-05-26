@@ -1,0 +1,112 @@
+@use './store-shared.scss';
+
+.gk-access-date-block {
+  margin-top: 1rem;
+}
+
+.gk-access-date-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--gk-zinc-300);
+  cursor: pointer;
+  margin: 0 0 0.75rem;
+}
+
+.gk-access-date-check input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.access-cart-page {
+  max-width: 44rem;
+}
+
+.access-cart-empty-link {
+  color: var(--gk-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.access-cart-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.access-cart-line-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.access-cart-line-j-label {
+  font-size: 0.8125rem;
+  margin-bottom: 0.35rem;
+}
+
+.access-cart-line-j {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.access-cart-line {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--gk-zinc-800);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.access-cart-line-main {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.access-cart-line-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--gk-accent);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.access-cart-line-meta {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  color: var(--gk-zinc-400);
+}
+
+.access-cart-remove {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.access-cart-form-card {
+  margin-top: 1.25rem;
+}
+
+.access-cart-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}

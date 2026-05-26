@@ -1,0 +1,164 @@
+.audit-page .gk-page-header-strip {
+  margin-bottom: 1.25rem;
+}
+
+.audit-filters {
+  margin-bottom: 1.25rem;
+}
+
+.audit-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .audit-filter-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.audit-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.audit-ib-panel {
+  margin-bottom: 1.25rem;
+}
+
+.audit-ib-hint {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.audit-ib-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.audit-ib-chip {
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--gk-zinc-700);
+  background: var(--gk-zinc-950);
+  color: var(--gk-zinc-300);
+}
+
+.audit-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+}
+
+.audit-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--gk-zinc-800);
+  border-radius: 0.75rem;
+  background: var(--gk-zinc-950);
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.audit-table th,
+.audit-table td {
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gk-zinc-800);
+}
+
+.audit-table th {
+  font-weight: 600;
+  color: var(--gk-zinc-400);
+  white-space: nowrap;
+}
+
+.audit-td-time {
+  white-space: nowrap;
+  color: var(--gk-zinc-300);
+}
+
+.audit-td-mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.audit-td-user {
+  font-weight: 600;
+  color: var(--gk-zinc-100);
+}
+
+.audit-td-req {
+  white-space: nowrap;
+}
+
+.audit-req-link {
+  color: var(--gk-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.audit-req-link:hover {
+  text-decoration: underline;
+}
+
+.audit-act {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.audit-act--auth {
+  color: #a78bfa;
+}
+
+.audit-act--approval {
+  color: #fbbf24;
+}
+
+.audit-act--request {
+  color: #34d399;
+}
+
+.audit-act--attach {
+  color: #38bdf8;
+}
+
+.audit-td-details {
+  max-width: 22rem;
+}
+
+.audit-details summary {
+  cursor: pointer;
+  color: var(--gk-accent);
+  font-weight: 600;
+}
+
+.audit-pre {
+  margin: 0.5rem 0 0;
+  padding: 0.65rem;
+  border-radius: 0.35rem;
+  background: var(--gk-black);
+  border: 1px solid var(--gk-zinc-800);
+  font-size: 0.6875rem;
+  overflow-x: auto;
+  max-height: 10rem;
+}
+
+.audit-footnote {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+}
+
+.audit-footnote code {
+  font-size: 0.75em;
+}

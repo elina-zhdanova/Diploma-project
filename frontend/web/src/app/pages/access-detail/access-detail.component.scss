@@ -1,0 +1,29 @@
+/* Стили в gk-theme.scss */
+
+.gk-access-date-block {
+  margin-top: 1rem;
+}
+
+.gk-access-date-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--gk-zinc-300);
+  cursor: pointer;
+  margin: 0 0 0.75rem;
+}
+
+.gk-access-date-check input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.access-detail-cart-panel {
+  flex: 1 1 100%;
+  max-width: 32rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--gk-zinc-800);
+  border-radius: 0.5rem;
+  background: var(--gk-zinc-950);
+}

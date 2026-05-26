@@ -1,0 +1,155 @@
+<div class="gk-page detail-page" [class.detail-page--panel]="panelMode">
+  @if (loading) {
+    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 2rem 0">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка…</span>
+    </div>
+  } @else if (error && !req) {
+    <div class="gk-alert-error">{{ error }}</div>
+    <a [routerLink]="backToListPath()" class="gk-btn-ghost" style="display: inline-flex; margin-top: 1rem">Назад</a>
+  } @else if (req) {
+    <header class="gk-detail-header">
+      <div class="gk-detail-header-row">
+        <div>
+          <p class="gk-eyebrow" style="margin-bottom: 0.35rem">Заявка на доступ</p>
+          <h1 class="gk-page-title gk-detail-role-title" style="margin: 0; font-size: clamp(1.35rem, 3vw, 1.85rem)">
+            {{ requestRoleHeadline() }}
+          </h1>
+          <p class="gk-muted gk-detail-initiator-line" style="margin: 0.65rem 0 0">
+            Инициатор:
+            @if (initiatorDisplayName(); as who) {
+              <strong class="gk-detail-initiator-name">{{ who }}</strong>
+              @if (showInitiatorLoginTag()) {
+                <span class="gk-login-tag">{{ req.initiator_login }}</span>
+              }
+            } @else {
+              <span class="gk-detail-initiator-missing">не указан</span>
+            }
+          </p>
+          <p class="gk-muted" style="margin: 0.35rem 0 0">Создана: {{ formatWhen(req.created_at) }}</p>
+        </div>
+        <span [class]="statusPillClass(req.status)">{{ req.status }}</span>
+      </div>
+    </header>
+
+    <div class="gk-filters-card gk-meta-panel">
+      <div class="gk-meta-grid">
+        <div>
+          <span class="gk-meta-label">Обновлена</span>
+          <span class="gk-meta-val">{{ formatWhen(req.updated_at) }}</span>
+        </div>
+        <div>
+          <span class="gk-meta-label">Оценка риска</span>
+          <span class="gk-meta-val">
+            @if (req.risk_score != null && req.risk_score !== undefined) {
+              {{ req.risk_score | number: '1.0-2' }}
+            } @else {
+              не рассчитана
+            }
+          </span>
+        </div>
+        @if (req.needed_until) {
+          <div>
+            <span class="gk-meta-label">Нужен до</span>
+            <span class="gk-meta-val">{{ formatDateRU(req.needed_until) }}</span>
+          </div>
+        }
+      </div>
+      @if (req.justification && !hasPerItemJustification()) {
+        <div class="gk-just-block">
+          <span class="gk-meta-label">Обоснование</span>
+          <p class="gk-just-text">{{ req.justification }}</p>
+        </div>
+      }
+    </div>
+
+    @if (actionError) {
+      <div class="gk-alert-error">{{ actionError }}</div>
+    }
+
+    @if (canCancel()) {
+      <div class="gk-filters-card gk-action-panel">
+        <h2 class="gk-panel-title">Действия инициатора</h2>
+        <button type="button" class="gk-btn-danger" [disabled]="actionBusy" (click)="cancel()">
+          {{ actionBusy ? '…' : 'Отозвать заявку' }}
+        </button>
+      </div>
+    }
+
+    @if (canDecide()) {
+      <div class="gk-filters-card gk-action-panel gk-decide">
+        <h2 class="gk-panel-title">Согласование</h2>
+        @if (actsAsDelegate()) {
+          <p class="gk-muted">Вы действуете как заместитель согласующего на текущем шаге маршрута (делегирование).</p>
+        } @else {
+          <p class="gk-muted">Вы назначены на текущий шаг — примите решение.</p>
+        }
+        <label class="gk-field">
+          <span>Комментарий при согласовании</span>
+          <input [(ngModel)]="approveComment" name="ac" type="text" placeholder="Необязательно" class="gk-input" />
+        </label>
+        <div class="gk-btn-row">
+          <button type="button" class="gk-btn-primary" [disabled]="actionBusy" (click)="approve()">
+            {{ actionBusy ? '…' : 'Согласовать' }}
+          </button>
+        </div>
+        <label class="gk-field">
+          <span>Комментарий при отказе</span>
+          <input [(ngModel)]="rejectComment" name="rc" type="text" placeholder="Желательно указать причину" class="gk-input" />
+        </label>
+        <div class="gk-btn-row">
+          <button type="button" class="gk-btn-danger" [disabled]="actionBusy" (click)="reject()">
+            {{ actionBusy ? '…' : 'Отклонить' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <h2 class="gk-section-title">Позиции</h2>
+    <div class="gk-access-grid gk-items-grid">
+      @for (it of req.items; track it.id) {
+        <div class="gk-filters-card gk-item-card">
+          <div style="margin-bottom: 0.45rem">
+            <span [class]="riskTagClass(it.risk_level)">{{ it.risk_level }}</span>
+          </div>
+          <h3 class="gk-item-title">{{ it.resource_name }}</h3>
+          <p class="gk-item-role-line">
+            <a [routerLink]="['/access', it.access_role_id]" class="gk-access-role-link">{{ it.access_role_name }}</a>
+          </p>
+          @if ((it.justification ?? '').trim()) {
+            <div class="gk-item-just-block">
+              <span class="gk-meta-label">Обоснование</span>
+              <p class="gk-just-text gk-item-just-text">{{ it.justification }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <h2 class="gk-section-title gk-appr-section-title">Цепочка согласований</h2>
+    <div class="gk-filters-card gk-appr-compact">
+      @for (a of req.approvals; track a.id) {
+        <div class="gk-appr-row">
+          <div class="gk-appr-row-top">
+            <span class="gk-appr-step">Шаг {{ a.step_number }}</span>
+            <span [class]="statusPillClass(a.status)">{{ a.status }}</span>
+            @if (a.decision_at) {
+              <span class="gk-appr-when">{{ formatWhen(a.decision_at) }}</span>
+            } @else {
+              <span class="gk-appr-when gk-appr-when--empty">—</span>
+            }
+          </div>
+          <div class="gk-appr-row-person">
+            <strong>{{ approverDisplayName(a) }}</strong>
+            @if (showApproverLoginTag(a)) {
+              <span class="gk-login-tag">{{ a.approver_login }}</span>
+            }
+          </div>
+          @if (a.comment) {
+            <p class="gk-appr-comm gk-appr-comm--compact">{{ a.comment }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

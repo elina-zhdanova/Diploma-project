@@ -1,0 +1,51 @@
+.profile-page .gk-page-header-strip {
+  margin-bottom: 1.5rem;
+}
+
+.profile-card {
+  max-width: 40rem;
+}
+
+.profile-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gk-zinc-800);
+}
+
+.profile-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
+  background: var(--gk-accent);
+  color: var(--gk-accent-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--gk-zinc-100);
+}
+
+.profile-section {
+  margin-top: 0.5rem;
+}
+
+.profile-link {
+  color: var(--gk-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.profile-link:hover {
+  text-decoration: underline;
+}

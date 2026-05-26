@@ -1,0 +1,362 @@
+<div class="gk-page list-page deleg-page">
+  <header class="deleg-hero">
+    <p class="gk-eyebrow">Полномочия согласования</p>
+    <h1 class="gk-page-title deleg-hero-title">Делегирование</h1>
+    <p class="deleg-lead gk-muted">
+      Передайте право решать заявки на текущем шаге другому пользователю: укажите получателя, срок и при необходимости ограничьте список ролей из каталога.
+    </p>
+  </header>
+
+  @if (listError) {
+    <div class="gk-alert-error deleg-alert">{{ listError }}</div>
+  }
+
+  <div class="deleg-compose">
+    @if (formSuccess) {
+      <div class="deleg-success" role="status">
+        <span class="deleg-success-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </span>
+        <span class="deleg-success-text">{{ formSuccess }}</span>
+        <button type="button" class="deleg-success-close" (click)="dismissSuccess()" aria-label="Закрыть">×</button>
+      </div>
+    }
+
+    <div class="deleg-panel">
+      <div class="deleg-panel-head">
+        <div class="deleg-panel-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <div class="deleg-panel-head-text">
+          <h2 class="deleg-panel-title">Создать делегирование</h2>
+          <p class="deleg-panel-sub gk-muted">Одна запись = один получатель и один срок; несколько ролей можно отметить ниже.</p>
+        </div>
+      </div>
+
+      @if (rolesError) {
+        <div class="gk-alert-error deleg-alert">{{ rolesError }}</div>
+      }
+      @if (formError) {
+        <div class="gk-alert-error deleg-alert">{{ formError }}</div>
+      }
+
+      <section class="deleg-section" aria-labelledby="deleg-s1">
+        <div class="deleg-section-head">
+          <span class="deleg-step" aria-hidden="true">1</span>
+          <h3 id="deleg-s1" class="deleg-section-title">Получатель</h3>
+        </div>
+        <p class="deleg-section-hint gk-muted">Найдите пользователя по логину или ФИО (от 2 символов).</p>
+        <div class="deleg-recipient-block">
+          @if (selectedRecipient) {
+            <div class="deleg-recipient-picked">
+              <span class="deleg-avatar" aria-hidden="true">{{ personLabel(selectedRecipient.login, selectedRecipient.full_name).charAt(0).toUpperCase() }}</span>
+              <span class="deleg-recipient-picked-text">
+                <span class="deleg-recipient-name">{{ personLabel(selectedRecipient.login, selectedRecipient.full_name) }}</span>
+                <span class="gk-login-tag">{{ selectedRecipient.login }}</span>
+              </span>
+              <button type="button" class="gk-btn-ghost deleg-recipient-change" [disabled]="formBusy" (click)="clearRecipient()">Изменить</button>
+            </div>
+          } @else {
+            <div class="deleg-user-search">
+              <div class="deleg-user-search-row">
+                <input
+                  [(ngModel)]="recipientSearchQ"
+                  name="recq"
+                  type="search"
+                  class="gk-input deleg-user-input"
+                  placeholder="Логин или ФИО…"
+                  autocomplete="off"
+                  [disabled]="formBusy || recipientSearchLoading"
+                  (keydown.enter)="searchRecipientUsers()"
+                />
+                <button type="button" class="gk-btn-primary deleg-search-btn" [disabled]="formBusy || recipientSearchLoading" (click)="searchRecipientUsers()">
+                  {{ recipientSearchLoading ? '…' : 'Найти' }}
+                </button>
+              </div>
+              @if (recipientSearchError) {
+                <p class="deleg-user-search-msg">{{ recipientSearchError }}</p>
+              }
+              @if (recipientHits.length) {
+                <ul class="deleg-user-hits">
+                  @for (h of recipientHits; track h.id) {
+                    <li>
+                      <span class="deleg-user-hit-main">
+                        <span class="deleg-mini-avatar" aria-hidden="true">{{ personLabel(h.login, h.full_name).charAt(0).toUpperCase() }}</span>
+                        <span class="deleg-user-hit-label">{{ personLabel(h.login, h.full_name) }} <span class="gk-login-tag">{{ h.login }}</span></span>
+                      </span>
+                      <button type="button" class="gk-btn-primary deleg-user-hit-pick" [disabled]="formBusy" (click)="selectRecipient(h)">Выбрать</button>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="deleg-section" aria-labelledby="deleg-s2">
+        <div class="deleg-section-head">
+          <span class="deleg-step" aria-hidden="true">2</span>
+          <h3 id="deleg-s2" class="deleg-section-title">Срок</h3>
+        </div>
+        <div class="deleg-segment" role="group" aria-label="Срок делегирования">
+          <button
+            type="button"
+            class="deleg-segment-btn"
+            [class.deleg-segment-btn--active]="formPermanent"
+            [attr.aria-pressed]="formPermanent"
+            [disabled]="formBusy"
+            (click)="setPermanent(true)"
+          >
+            Бессрочно
+          </button>
+          <button
+            type="button"
+            class="deleg-segment-btn"
+            [class.deleg-segment-btn--active]="!formPermanent"
+            [attr.aria-pressed]="!formPermanent"
+            [disabled]="formBusy"
+            (click)="setPermanent(false)"
+          >
+            По датам
+          </button>
+        </div>
+        @if (!formPermanent) {
+          <div class="deleg-dates-row">
+            <label class="gk-field deleg-date-field">
+              <span>Начало</span>
+              <input [(ngModel)]="formStart" name="sd" type="date" class="gk-input" [disabled]="formBusy" />
+            </label>
+            <label class="gk-field deleg-date-field">
+              <span>Окончание</span>
+              <input [(ngModel)]="formEnd" name="ed" type="date" class="gk-input" [disabled]="formBusy" />
+            </label>
+          </div>
+        }
+      </section>
+
+      @if (myAccessRoles.length > 0) {
+        <section class="deleg-section" aria-labelledby="deleg-s3">
+          <div class="deleg-section-head">
+            <span class="deleg-step" aria-hidden="true">3</span>
+            <h3 id="deleg-s3" class="deleg-section-title">Область</h3>
+          </div>
+          <p class="deleg-section-hint gk-muted">Что именно передаётся: все ваши роли согласования в каталоге или только отмеченные.</p>
+          <div class="deleg-segment deleg-segment--wide" role="group" aria-label="Область делегирования">
+            <button
+              type="button"
+              class="deleg-segment-btn"
+              [class.deleg-segment-btn--active]="scopeMode === 'all'"
+              [attr.aria-pressed]="scopeMode === 'all'"
+              [disabled]="formBusy"
+              (click)="setScopeMode('all')"
+            >
+              Все роли
+            </button>
+            <button
+              type="button"
+              class="deleg-segment-btn"
+              [class.deleg-segment-btn--active]="scopeMode === 'picked'"
+              [attr.aria-pressed]="scopeMode === 'picked'"
+              [disabled]="formBusy"
+              (click)="setScopeMode('picked')"
+            >
+              Выбранные роли
+            </button>
+          </div>
+
+          @if (scopeMode === 'picked') {
+            <div class="deleg-roles-picked">
+              <div class="deleg-roles-toolbar">
+                <label class="gk-field deleg-role-filter-field">
+                  <span class="deleg-role-filter-span">Поиск роли</span>
+                  <input
+                    type="search"
+                    name="rolefil"
+                    class="gk-input"
+                    [(ngModel)]="roleFilterQ"
+                    placeholder="Фильтр по названию…"
+                    autocomplete="off"
+                    [disabled]="formBusy"
+                  />
+                </label>
+                <div class="deleg-roles-toolbar-actions">
+                  <button type="button" class="gk-btn-ghost deleg-roles-tiny-btn" [disabled]="formBusy || filteredAccessRoles.length === 0" (click)="selectAllFilteredRoles()">
+                    Все в списке
+                  </button>
+                  <button type="button" class="gk-btn-ghost deleg-roles-tiny-btn" [disabled]="formBusy || pickedRolesCount() === 0" (click)="clearPickedRoles()">
+                    Снять все
+                  </button>
+                </div>
+              </div>
+              <p class="deleg-roles-count">
+                <span class="deleg-pill-count">{{ pickedRolesCount() }}</span>
+                выбрано
+                @if (roleFilterQ.trim()) {
+                  <span class="gk-muted"> · показано {{ filteredAccessRoles.length }}</span>
+                }
+              </p>
+              <ul class="deleg-role-check-list" role="list">
+                @for (r of filteredAccessRoles; track r.id) {
+                  <li class="deleg-role-check-item" role="listitem">
+                    <label class="deleg-role-check-label">
+                      <input type="checkbox" [checked]="isRoleChecked(r.id)" [disabled]="formBusy" (change)="toggleRole(r.id)" />
+                      <span class="deleg-role-check-name">{{ r.name }}</span>
+                    </label>
+                  </li>
+                }
+              </ul>
+              @if (filteredAccessRoles.length === 0) {
+                <p class="deleg-roles-empty gk-muted">Нет совпадений — измените фильтр.</p>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      <div class="deleg-submit-wrap">
+        <button type="button" class="gk-btn-primary deleg-submit-btn" [disabled]="formBusy" (click)="submit()">
+          @if (formBusy) {
+            <span>Создание…</span>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Создать делегирование</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="deleg-loading">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка списка…</span>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="deleg-empty">
+      <div class="deleg-empty-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <p class="deleg-empty-title">Пока нет делегирований</p>
+      <p class="deleg-empty-text gk-muted">Создайте первую запись формой выше — она появится здесь.</p>
+    </div>
+  } @else {
+    <div class="deleg-list-block">
+      <div class="deleg-list-toolbar">
+        <h2 class="deleg-list-heading">Текущие делегирования</h2>
+        <div class="deleg-chips" role="tablist" aria-label="Фильтр списка">
+          <button
+            type="button"
+            class="deleg-chip"
+            [class.deleg-chip--active]="listFilter === 'all'"
+            [attr.aria-selected]="listFilter === 'all'"
+            (click)="listFilter = 'all'"
+          >
+            Все <span class="deleg-chip-n">{{ items.length }}</span>
+          </button>
+          <button
+            type="button"
+            class="deleg-chip"
+            [class.deleg-chip--active]="listFilter === 'out'"
+            [attr.aria-selected]="listFilter === 'out'"
+            (click)="listFilter = 'out'"
+          >
+            От меня <span class="deleg-chip-n">{{ outgoingCount() }}</span>
+          </button>
+          <button
+            type="button"
+            class="deleg-chip"
+            [class.deleg-chip--active]="listFilter === 'in'"
+            [attr.aria-selected]="listFilter === 'in'"
+            (click)="listFilter = 'in'"
+          >
+            Ко мне <span class="deleg-chip-n">{{ incomingCount() }}</span>
+          </button>
+        </div>
+      </div>
+
+      @if (filteredDelegations.length === 0) {
+        <div class="deleg-empty deleg-empty--soft">
+          <p class="gk-muted" style="margin: 0">В этой категории записей нет. Выберите другой фильтр.</p>
+        </div>
+      } @else {
+        <div class="deleg-list">
+          @for (d of filteredDelegations; track d.id) {
+            <article class="deleg-card" [class.deleg-card--out]="isOutgoing(d)" [class.deleg-card--in]="!isOutgoing(d)">
+              <div class="deleg-card-top">
+                <div class="deleg-card-badges">
+                  @if (isOutgoing(d)) {
+                    <span class="deleg-badge deleg-badge--out">Исходящее</span>
+                  } @else {
+                    <span class="deleg-badge deleg-badge--in">Входящее</span>
+                  }
+                  @if (d.is_active) {
+                    <span class="deleg-badge deleg-badge--live">Активно</span>
+                  } @else {
+                    <span class="deleg-badge deleg-badge--off">Не действует</span>
+                  }
+                </div>
+              </div>
+              <div class="deleg-card-flow">
+                @if (isOutgoing(d)) {
+                  <span class="deleg-flow-from">
+                    <span class="deleg-flow-label">От</span>
+                    <strong>Вы</strong>
+                  </span>
+                  <span class="deleg-flow-arrow" aria-hidden="true">→</span>
+                  <span class="deleg-flow-to">
+                    <span class="deleg-flow-label">Кому</span>
+                    <span class="deleg-flow-name">{{ personLabel(d.to_login, d.to_full_name) }}</span>
+                    <span class="gk-login-tag">{{ d.to_login }}</span>
+                  </span>
+                } @else {
+                  <span class="deleg-flow-from">
+                    <span class="deleg-flow-label">От</span>
+                    <span class="deleg-flow-name">{{ personLabel(d.from_login, d.from_full_name) }}</span>
+                    <span class="gk-login-tag">{{ d.from_login }}</span>
+                  </span>
+                  <span class="deleg-flow-arrow" aria-hidden="true">→</span>
+                  <span class="deleg-flow-to">
+                    <span class="deleg-flow-label">Кому</span>
+                    <strong>вы</strong>
+                  </span>
+                }
+              </div>
+              <dl class="deleg-card-meta">
+                <div class="deleg-meta-row">
+                  <dt>Срок</dt>
+                  <dd>{{ formatRange(d) }}</dd>
+                </div>
+                <div class="deleg-meta-row">
+                  <dt>Область</dt>
+                  <dd>{{ scopeLabel(d) }}</dd>
+                </div>
+              </dl>
+              @if (canDelete(d)) {
+                <div class="deleg-card-actions">
+                  <button type="button" class="gk-btn-danger deleg-revoke-btn" [disabled]="formBusy" (click)="remove(d)">Отозвать</button>
+                </div>
+              }
+            </article>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

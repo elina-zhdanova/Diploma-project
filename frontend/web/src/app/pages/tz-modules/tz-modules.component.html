@@ -1,0 +1,45 @@
+<div class="gk-page tz-mod-page">
+  <header class="gk-page-header-strip">
+    <h1 class="gk-page-title">Модули системы</h1>
+    <p class="gk-muted" style="margin: 0">
+      Сводка требований и то, что уже отражено в ITShop. Ссылки ведут в существующие разделы приложения.
+    </p>
+  </header>
+
+  <section class="tz-mod-legend gk-filters-card">
+    <span class="gk-label">Статусы</span>
+    <div class="tz-mod-legend-row">
+      <span class="tz-mod-badge tz-mod-badge--done">В интерфейсе</span>
+      <span class="tz-mod-badge tz-mod-badge--partial">Частично</span>
+      <span class="tz-mod-badge tz-mod-badge--planned">Планируется</span>
+    </div>
+  </section>
+
+  <div class="tz-mod-grid">
+    @for (b of blocks; track b.code) {
+      <article class="tz-mod-card">
+        <div class="tz-mod-card-head">
+          <span [class]="statusClass(b.status)">{{ statusText(b.status) }}</span>
+        </div>
+        <h2 class="tz-mod-title">{{ b.title }}</h2>
+        <p class="gk-muted tz-mod-req-label">Требования</p>
+        <ul class="tz-mod-list">
+          @for (line of b.requirements; track line) {
+            <li>{{ line }}</li>
+          }
+        </ul>
+        @if (b.links.length) {
+          <p class="gk-muted tz-mod-links-label">В приложении</p>
+          <div class="tz-mod-links">
+            @for (ln of b.links; track ln.route + ln.label) {
+              <a [routerLink]="ln.route" class="tz-mod-link">{{ ln.label }}</a>
+            }
+          </div>
+        }
+        @if (b.note) {
+          <p class="tz-mod-note">{{ b.note }}</p>
+        }
+      </article>
+    }
+  </div>
+</div>

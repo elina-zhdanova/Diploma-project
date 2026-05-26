@@ -1,0 +1,27 @@
+/* IT Shop — Gatekeeper / LaTech тёмная тема */
+@use './gk-theme.scss';
+@use './gk-theme-light.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.gk-app {
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gk-accent);
+  outline-offset: 2px;
+}

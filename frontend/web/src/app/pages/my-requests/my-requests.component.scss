@@ -1,0 +1,70 @@
+/* Стили в gk-theme.scss */
+
+.my-req-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.my-req-search-input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.my-req-search-count {
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.my-req-filter-empty {
+  margin-top: 0;
+}
+
+.my-req-title {
+  margin: 0 0 0.45rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--gk-zinc-100);
+}
+
+.my-req-initiator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  margin: 0 0 0.65rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--gk-zinc-400);
+}
+
+.my-req-initiator-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gk-zinc-500);
+}
+
+.my-req-initiator-body {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  color: var(--gk-zinc-200);
+}
+
+.my-req-initiator-body strong {
+  font-weight: 700;
+  color: var(--gk-zinc-100);
+}
+
+a.gk-req-card.gk-req-card--active {
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.06);
+}

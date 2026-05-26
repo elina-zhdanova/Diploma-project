@@ -1,0 +1,56 @@
+/* Пункт «На согласование» всегда виден; бейдж — число входящих */
+.gk-nav-inbox {
+  gap: 0.35rem;
+}
+
+.gk-nav-cart {
+  gap: 0.35rem;
+}
+
+.gk-nav-mobile-cart {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.gk-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--gk-accent);
+  color: var(--gk-accent-dark);
+}
+
+.gk-nav-badge--mobile {
+  margin-left: 0.3rem;
+}
+
+.gk-nav-mobile-inbox {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.gk-brand-link {
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.gk-brand-link:hover {
+  opacity: 0.95;
+}
+
+/* Блок пользователя без ссылки на профиль */
+.gk-nav .gk-user-btn {
+  cursor: default;
+}

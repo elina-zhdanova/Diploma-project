@@ -1,0 +1,715 @@
+/* Страница «На согласование» */
+
+.inbox-page {
+  max-width: 52rem;
+}
+
+/* В колонке со сплитом — на всю ширину колонки */
+:host-context(.requests-workspace-list) .inbox-page {
+  max-width: none;
+}
+
+:host {
+  display: block;
+}
+
+/* Плотная вёрстка: больше заявок на экране, чуть шире блок на больших мониторах */
+.inbox-page--dense {
+  max-width: min(100%, 76rem);
+  padding-bottom: 1rem;
+  padding-left: clamp(0.5rem, 1.5vw, 1.25rem);
+  padding-right: clamp(0.5rem, 1.5vw, 1.25rem);
+}
+
+:host-context(.requests-workspace-list) .inbox-page--dense {
+  max-width: none;
+}
+
+.inbox-page--dense .inbox-page-header {
+  margin-bottom: 0.55rem;
+  gap: 0.4rem 0.85rem;
+}
+
+.inbox-page--dense .inbox-page-title {
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  margin-bottom: 0.1rem;
+}
+
+.inbox-page--dense .inbox-page-lead {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.inbox-page--dense .inbox-page-stat {
+  padding: 0.35rem 0.55rem;
+}
+
+.inbox-page--dense .inbox-page-stat-value {
+  font-size: 1.15rem;
+}
+
+.inbox-page--dense .inbox-toolbar {
+  padding: 0.5rem 0.65rem 0.55rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.55rem;
+}
+
+.inbox-page--dense .inbox-toolbar-head {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.inbox-page--dense .inbox-toolbar-body {
+  gap: 0.35rem 0.5rem;
+}
+
+.inbox-page--dense .inbox-toolbar-hint {
+  margin-top: 0.4rem;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+
+.inbox-page--dense .inbox-bulk-btn {
+  min-height: 1.9rem;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
+  font-size: 0.8125rem;
+}
+
+.inbox-page--dense .inbox-list {
+  gap: 0.3rem;
+}
+
+.inbox-page--dense .inbox-item {
+  border-radius: 0.5rem;
+}
+
+.inbox-page--dense .inbox-item:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.inbox-page--dense .inbox-item-select {
+  width: 2rem;
+  padding: 0.3rem 0.25rem;
+}
+
+.inbox-page--dense .inbox-item-main {
+  padding: 0.35rem 0.45rem 0.35rem 0.5rem;
+}
+
+/* Роли — компактный список (без подписи «Роли в заявке») */
+.inbox-mini-role-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  border: 1px solid var(--gk-zinc-800);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--gk-zinc-950);
+}
+
+.inbox-mini-role-list__item {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--gk-zinc-50);
+}
+
+.inbox-mini-role-list__item:not(:last-child) {
+  border-bottom: 1px solid var(--gk-zinc-800);
+}
+
+.inbox-page--dense .inbox-mini-role-list {
+  margin-bottom: 0.28rem;
+  border-radius: 0.4rem;
+}
+
+.inbox-page--dense .inbox-mini-role-list__item {
+  padding: 0.25rem 0.45rem;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.inbox-initiator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  margin-bottom: 0.45rem;
+}
+
+.inbox-initiator-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gk-zinc-500);
+  flex-shrink: 0;
+}
+
+.inbox-initiator-main {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.5rem;
+  min-width: 0;
+}
+
+.inbox-initiator-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--gk-zinc-100);
+}
+
+/* Имя и логин — один кегль, без «склейки» визуально */
+.inbox-initiator-main .gk-login-tag {
+  margin: 0;
+  padding: 0.12rem 0.45rem;
+  border-radius: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--gk-zinc-300);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--gk-zinc-700);
+}
+
+.inbox-page--dense .inbox-initiator {
+  margin-bottom: 0.35rem;
+  gap: 0.3rem 0.5rem;
+}
+
+.inbox-page--dense .inbox-initiator-label {
+  font-size: 0.65rem;
+  color: var(--gk-zinc-400);
+}
+
+.inbox-page--dense .inbox-initiator-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gk-zinc-100);
+}
+
+.inbox-page--dense .inbox-initiator-main .gk-login-tag {
+  font-size: 0.8125rem;
+}
+
+.inbox-page--dense .inbox-initiator-main {
+  gap: 0.25rem 0.4rem;
+}
+
+.inbox-page--dense .inbox-item-meta-row {
+  margin-bottom: 0.25rem;
+  gap: 0.35rem 0.5rem;
+}
+
+.inbox-page--dense .inbox-item-tags {
+  gap: 0.25rem;
+}
+
+.inbox-page--dense .inbox-item-meta-row .gk-tag,
+.inbox-page--dense .inbox-risk-pill {
+  font-size: 0.625rem;
+  padding: 0.08rem 0.3rem;
+}
+
+.inbox-page--dense .inbox-item-dates {
+  margin-bottom: 0.2rem;
+  gap: 0.3rem 0.5rem;
+}
+
+.inbox-page--dense .inbox-item-date {
+  font-size: 0.6875rem;
+}
+
+.inbox-page--dense .inbox-item-date-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.inbox-page--dense .inbox-just-preview {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  -webkit-line-clamp: 1;
+}
+
+.inbox-page--dense .inbox-item-cta {
+  width: 3.1rem;
+  padding: 0.3rem 0.2rem;
+  font-size: 0.58rem;
+  gap: 0.2rem;
+}
+
+.inbox-page--dense .inbox-item-cta svg {
+  width: 13px;
+  height: 13px;
+}
+
+.inbox-page--dense .inbox-req-title {
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.inbox-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.inbox-page-title {
+  margin-bottom: 0.35rem;
+}
+
+.inbox-page-lead {
+  margin: 0;
+  max-width: 36rem;
+  line-height: 1.55;
+}
+
+.inbox-page-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 5rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--gk-zinc-800);
+  background: linear-gradient(145deg, rgba(56, 189, 248, 0.08) 0%, transparent 55%);
+}
+
+.inbox-page-stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--gk-zinc-50);
+  font-variant-numeric: tabular-nums;
+}
+
+.inbox-page-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gk-zinc-500);
+  margin-top: 0.2rem;
+}
+
+.inbox-page-alert {
+  margin-bottom: 1rem;
+}
+
+.inbox-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.inbox-search-input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.inbox-search-count {
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.inbox-filter-empty {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  color: var(--gk-zinc-400);
+  font-size: 0.9rem;
+  border-radius: 0.65rem;
+  border: 1px dashed var(--gk-zinc-700);
+  margin-bottom: 0.75rem;
+}
+
+.inbox-page--dense .inbox-search-row {
+  margin-bottom: 0.5rem;
+}
+
+.inbox-page--dense .inbox-filter-empty {
+  padding: 0.85rem 0.75rem;
+  font-size: 0.8125rem;
+  margin-bottom: 0.5rem;
+}
+
+.inbox-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 2.5rem 0;
+  justify-content: center;
+}
+
+.inbox-empty {
+  text-align: center;
+  padding: 2.5rem 1.25rem 2rem;
+  border-radius: 0.75rem;
+  border: 1px dashed var(--gk-zinc-700);
+  background: rgba(24, 24, 27, 0.5);
+}
+
+.inbox-empty-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: var(--gk-zinc-600);
+}
+
+.inbox-empty-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gk-zinc-200);
+}
+
+.inbox-empty-text {
+  margin: 0 auto;
+  max-width: 26rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--gk-zinc-400);
+}
+
+/* Панель массовых действий */
+.inbox-toolbar {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.15rem 1.1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--gk-zinc-800);
+  background: var(--gk-zinc-950);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.inbox-toolbar-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gk-zinc-800);
+}
+
+.inbox-toolbar-icon {
+  display: flex;
+  color: var(--gk-accent, #38bdf8);
+  opacity: 0.9;
+}
+
+.inbox-toolbar-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gk-zinc-400);
+}
+
+.inbox-toolbar-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.85rem;
+}
+
+.inbox-toolbar-hint {
+  margin: 0.85rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--gk-zinc-500);
+}
+
+.inbox-bulk-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  color: var(--gk-zinc-300);
+  flex-shrink: 0;
+}
+
+.inbox-bulk-select-all input {
+  cursor: pointer;
+}
+
+.inbox-bulk-comment {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.inbox-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.inbox-bulk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.35rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.inbox-bulk-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.gk-btn-danger .inbox-bulk-count {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.inbox-bulk-reject-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--gk-zinc-100);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.inbox-bulk-msg {
+  margin-bottom: 0.85rem;
+}
+
+.inbox-page--dense .inbox-bulk-msg {
+  margin-bottom: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.8125rem;
+}
+
+/* Список заявок */
+.inbox-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inbox-item {
+  display: flex;
+  align-items: stretch;
+  border-radius: 0.75rem;
+  border: 1px solid var(--gk-zinc-800);
+  background: var(--gk-zinc-950);
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.inbox-item:hover {
+  border-color: var(--gk-zinc-600);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.inbox-item--checked {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.inbox-item:has(.inbox-item-link--current) {
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.2),
+    0 8px 28px rgba(34, 211, 238, 0.08);
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.inbox-item-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  margin: 0;
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid var(--gk-zinc-800);
+  transition: background 0.15s ease;
+}
+
+.inbox-item:hover .inbox-item-select {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.inbox-item-select input {
+  cursor: pointer;
+}
+
+.inbox-item-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.inbox-item-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 1rem 0.85rem 1rem 1rem;
+}
+
+.inbox-req-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--gk-zinc-50);
+}
+
+.inbox-item-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.inbox-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.inbox-risk-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gk-zinc-400);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
+  background: rgba(113, 113, 122, 0.2);
+}
+
+.inbox-item-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.inbox-item-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--gk-zinc-400);
+}
+
+.inbox-item-date--deadline {
+  color: var(--gk-amber-400);
+}
+
+.inbox-item-date-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.inbox-just-preview {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--gk-zinc-300);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.inbox-item-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  width: 4.5rem;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gk-zinc-500);
+  border-left: 1px solid var(--gk-zinc-800);
+  background: rgba(0, 0, 0, 0.15);
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.inbox-item-link:hover .inbox-item-cta {
+  color: var(--gk-accent, #38bdf8);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.inbox-item-link:hover .inbox-item-cta svg {
+  transform: translateX(2px);
+}
+
+.inbox-item-cta svg {
+  transition: transform 0.15s ease;
+}
+
+@media (max-width: 520px) {
+  .inbox-page-stat {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .inbox-item-link {
+    flex-direction: column;
+  }
+
+  .inbox-item-cta {
+    flex-direction: row;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--gk-zinc-800);
+    padding: 0.65rem 1rem;
+    justify-content: center;
+  }
+
+  .inbox-page--dense .inbox-item-cta {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.65rem;
+  }
+}

@@ -1,0 +1,43 @@
+<div class="gk-login-split">
+  <div class="gk-login-hero">
+    <div style="position: relative; z-index: 1; max-width: 28rem">
+      <app-latech-logo />
+      <h1 style="margin: 2rem 0 1rem; font-size: clamp(1.85rem, 4vw, 2.35rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15">
+        Внутренний каталог доступов
+      </h1>
+      <p style="margin: 0; color: rgba(255, 255, 255, 0.72); line-height: 1.65; font-size: 1.02rem">
+        Оформление заявок и согласований в стиле Gatekeeper / LaTech (IT Shop + Go API).
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 2rem">
+        <span style="padding: 0.4rem 0.85rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.06)">IT Shop</span>
+        <span style="padding: 0.4rem 0.85rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 600; border: 1px solid rgba(223, 255, 77, 0.35); background: rgba(223, 255, 77, 0.1); color: var(--gk-accent)">Angular + Go</span>
+      </div>
+    </div>
+  </div>
+  <div class="gk-login-form-side">
+    <div class="gk-login-card">
+      <p class="gk-eyebrow" style="margin-bottom: 0.35rem">Вход</p>
+      <h2 style="margin: 0 0 1.5rem; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: #18181b">Войти в систему</h2>
+      <form (ngSubmit)="submit()">
+        <label class="gk-login-label" for="login-user">
+          <span>Логин</span>
+          <input id="login-user" class="gk-login-input" [(ngModel)]="login" name="login" required autocomplete="username" />
+        </label>
+        <label class="gk-login-label" for="login-pass">
+          <span>Пароль</span>
+          <input id="login-pass" class="gk-login-input" [(ngModel)]="password" name="password" type="password" required autocomplete="current-password" />
+        </label>
+        @if (error) {
+          <div class="gk-login-error">{{ error }}</div>
+        }
+        <button type="submit" class="gk-btn-primary gk-login-submit" [disabled]="loading">
+          {{ loading ? 'Вход…' : 'Войти' }}
+        </button>
+      </form>
+      <div class="gk-demo-box">
+        Демо: <strong>initiator</strong> / <strong>approver</strong> / <strong>security</strong> / <strong>admin</strong> — пароль
+        <code>password</code>
+      </div>
+    </div>
+  </div>
+</div>

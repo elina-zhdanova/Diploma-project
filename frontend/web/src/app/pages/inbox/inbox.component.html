@@ -1,0 +1,195 @@
+<div class="gk-page list-page inbox-page inbox-page--dense">
+  <header class="inbox-page-header">
+    <div class="inbox-page-header-main">
+      <p class="gk-eyebrow">Согласование</p>
+      <h1 class="gk-page-title inbox-page-title">На согласование</h1>
+      <p class="gk-muted inbox-page-lead">Заявки, где вы назначены согласующим на текущем шаге маршрута.</p>
+    </div>
+    @if (!loading && items.length > 0) {
+      <div class="inbox-page-stat" aria-live="polite">
+        <span class="inbox-page-stat-value">{{ items.length }}</span>
+        <span class="inbox-page-stat-label">входящих</span>
+      </div>
+    }
+  </header>
+
+  @if (error) {
+    <div class="gk-alert-error inbox-page-alert">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="inbox-loading">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка входящих…</span>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="inbox-empty">
+      <div class="inbox-empty-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+      </div>
+      <h2 class="inbox-empty-title">Входящих заявок нет</h2>
+      <p class="inbox-empty-text">Когда инициаторы направят заявки на доступ, и вы окажетесь на текущем шаге согласования, они появятся в этом списке.</p>
+    </div>
+  } @else {
+    <div class="inbox-search-row">
+      <input
+        id="inbox-search"
+        class="gk-input inbox-search-input"
+        type="search"
+        name="inboxq"
+        [(ngModel)]="searchQuery"
+        placeholder="Поиск по логину, ФИО, ролям доступа…"
+        autocomplete="off"
+        aria-label="Поиск по логину, ФИО и ролям доступа"
+      />
+      @if (searchQuery.trim()) {
+        <span class="inbox-search-count gk-muted">{{ filteredItems.length }} из {{ items.length }}</span>
+      }
+    </div>
+
+    @if (filteredItems.length === 0) {
+      <div class="inbox-filter-empty" role="status">Ничего не найдено. Измените запрос.</div>
+    } @else {
+    <section class="inbox-toolbar" aria-label="Массовые действия по выбранным заявкам">
+      <div class="inbox-toolbar-head">
+        <span class="inbox-toolbar-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>
+        </span>
+        <h2 class="inbox-toolbar-title">Массовое решение</h2>
+      </div>
+      <div class="inbox-toolbar-body">
+        <label class="inbox-bulk-select-all">
+          <input type="checkbox" [checked]="allSelected" (change)="toggleAll()" />
+          <span>Все</span>
+        </label>
+        <input
+          class="gk-input inbox-bulk-comment"
+          type="text"
+          name="bulkc"
+          [(ngModel)]="bulkComment"
+          placeholder="Комментарий (необязательно)"
+          autocomplete="off"
+        />
+        <div class="inbox-bulk-actions">
+          <button type="button" class="gk-btn-primary inbox-bulk-btn" [disabled]="bulkBusy || selectedIds.length === 0" (click)="bulkApprove()">
+            {{ bulkBusy ? '…' : 'Согласовать' }}
+            @if (selectedIds.length > 0) {
+              <span class="inbox-bulk-count">{{ selectedIds.length }}</span>
+            }
+          </button>
+          <button type="button" class="gk-btn-danger inbox-bulk-btn" [disabled]="bulkBusy || selectedIds.length === 0" (click)="bulkReject()">
+            {{ bulkBusy ? '…' : 'Отклонить' }}
+            @if (selectedIds.length > 0) {
+              <span class="inbox-bulk-count">{{ selectedIds.length }}</span>
+            }
+          </button>
+        </div>
+      </div>
+      <p class="inbox-toolbar-hint">
+        Отметьте заявки слева — согласовать или отклонить выбранные одним действием либо открыть заявку отдельно.
+      </p>
+    </section>
+
+    @if (lastBulkResult; as br) {
+      @if (br.type === 'approve') {
+        <div class="gk-success-banner inbox-bulk-msg">{{ br.text }}</div>
+      } @else {
+        <div class="inbox-bulk-reject-banner inbox-bulk-msg">{{ br.text }}</div>
+      }
+    }
+    @if (bulkError) {
+      <div class="gk-alert-error inbox-bulk-msg">{{ bulkError }}</div>
+    }
+
+    <ul class="inbox-list" role="list">
+      @for (r of filteredItems; track r.id) {
+        <li class="inbox-item" [class.inbox-item--checked]="isSelected(r.id)" role="listitem">
+          <label class="inbox-item-select" (click)="$event.stopPropagation()">
+            <input
+              type="checkbox"
+              [checked]="isSelected(r.id)"
+              (change)="toggle(r.id)"
+              (click)="$event.stopPropagation()"
+              [attr.aria-label]="'Выбрать: ' + requestTitle(r) + ', запросил: ' + initiatorDisplayName(r)"
+            />
+          </label>
+          <a
+            [routerLink]="['/inbox', r.id]"
+            routerLinkActive="inbox-item-link--current"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="inbox-item-link"
+          >
+            <div class="inbox-item-main">
+              <div class="inbox-initiator">
+                <span class="inbox-initiator-label">Запросил доступ</span>
+                <div class="inbox-initiator-main">
+                  <strong class="inbox-initiator-name">{{ initiatorDisplayName(r) }}</strong>
+                  @if (showInitiatorLoginTag(r)) {
+                    <span class="gk-login-tag">{{ r.initiator_login }}</span>
+                  }
+                </div>
+              </div>
+              @if (roleNamesList(r).length > 0) {
+                <ul class="inbox-mini-role-list" aria-label="Роли в заявке">
+                  @for (name of roleNamesList(r); track $index) {
+                    <li class="inbox-mini-role-list__item">{{ name }}</li>
+                  }
+                </ul>
+              } @else {
+                <h3 class="inbox-req-title">Заявка на доступ</h3>
+              }
+              <div class="inbox-item-meta-row">
+                <div class="inbox-item-tags">
+                  @if (r.current_step != null && r.current_step !== undefined) {
+                    <span class="gk-tag gk-tag-accent">Шаг {{ r.current_step }}</span>
+                  }
+                  @if (r.risk_score != null && r.risk_score !== undefined) {
+                    <span class="inbox-risk-pill">Риск {{ r.risk_score | number: '1.0-2' }}</span>
+                  }
+                </div>
+              </div>
+              <div class="inbox-item-dates">
+                @if (r.created_at) {
+                  <span class="inbox-item-date">
+                    <svg class="inbox-item-date-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    {{ formatWhen(r.created_at) }}
+                  </span>
+                }
+                @if (r.needed_until) {
+                  <span class="inbox-item-date inbox-item-date--deadline">
+                    <svg class="inbox-item-date-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    До {{ formatDateShort(r.needed_until) }}
+                  </span>
+                }
+              </div>
+              @if (r.justification) {
+                <p class="inbox-just-preview">{{ r.justification }}</p>
+              }
+            </div>
+            <span class="inbox-item-cta">
+              Открыть
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+    }
+  }
+</div>

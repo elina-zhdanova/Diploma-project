@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS audit_logs;
+DROP TABLE IF EXISTS ai_decisions;
+DROP TABLE IF EXISTS delegations;
+DROP TABLE IF EXISTS approvals;
+DROP TABLE IF EXISTS request_items;
+DROP TABLE IF EXISTS requests;
+DROP TABLE IF EXISTS access_roles;
+DROP TABLE IF EXISTS resources;
+DROP TABLE IF EXISTS systems;
+DROP TABLE IF EXISTS user_roles;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS rbac_roles;
+DROP TABLE IF EXISTS departments;

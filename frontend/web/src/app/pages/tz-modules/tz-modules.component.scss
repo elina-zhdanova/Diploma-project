@@ -1,0 +1,134 @@
+.tz-mod-page .gk-page-header-strip {
+  margin-bottom: 1.25rem;
+}
+
+.tz-mod-legend {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.tz-mod-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tz-mod-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .tz-mod-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .tz-mod-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.tz-mod-card {
+  border: 1px solid var(--gk-zinc-800);
+  border-radius: 0.75rem;
+  background: var(--gk-zinc-950);
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.tz-mod-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.tz-mod-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.tz-mod-badge--done {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.tz-mod-badge--partial {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.tz-mod-badge--planned {
+  background: var(--gk-zinc-800);
+  color: var(--gk-zinc-400);
+  border: 1px solid var(--gk-zinc-600);
+}
+
+.tz-mod-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gk-zinc-100);
+  line-height: 1.3;
+}
+
+.tz-mod-req-label,
+.tz-mod-links-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+}
+
+.tz-mod-list {
+  margin: 0 0 0.85rem;
+  padding-left: 1.15rem;
+  font-size: 0.8125rem;
+  color: var(--gk-zinc-300);
+  line-height: 1.45;
+}
+
+.tz-mod-list li {
+  margin-bottom: 0.25rem;
+}
+
+.tz-mod-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.tz-mod-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gk-accent);
+  text-decoration: none;
+}
+
+.tz-mod-link:hover {
+  text-decoration: underline;
+}
+
+.tz-mod-note {
+  margin: 0;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--gk-zinc-800);
+  font-size: 0.75rem;
+  color: var(--gk-zinc-500);
+  line-height: 1.4;
+}

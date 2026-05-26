@@ -1,0 +1,218 @@
+<div class="gk-page admin-page">
+  <header class="gk-page-header-strip">
+    <h1 class="gk-page-title">Администрирование</h1>
+    <p class="gk-muted" style="margin: 0">
+      Каталог доступов, маршрут согласования по умолчанию, роли пользователей и метрики. Доступно только учётным записям с ролью <strong>admin</strong>.
+    </p>
+  </header>
+
+  @if (loading) {
+    <div class="admin-loading">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка сводки…</span>
+    </div>
+  } @else if (error) {
+    <div class="gk-alert-error">{{ error }}</div>
+  } @else if (data) {
+    <div class="admin-grid">
+      <section class="gk-filters-card admin-card">
+        <h2 class="gk-panel-title">Каталог доступов</h2>
+        <p class="gk-muted admin-card-desc">Объёмы данных в БД (информационные системы, ресурсы, роли доступа).</p>
+        <ul class="admin-stat-list">
+          <li><span class="admin-stat-label">Системы</span> <strong>{{ data.catalog.systems_count }}</strong></li>
+          <li><span class="admin-stat-label">Ресурсы</span> <strong>{{ data.catalog.resources_count }}</strong></li>
+          <li><span class="admin-stat-label">Роли доступа</span> <strong>{{ data.catalog.access_roles_count }}</strong></li>
+        </ul>
+        <a routerLink="/store" class="gk-btn-primary admin-card-btn">Открыть каталог в интерфейсе</a>
+      </section>
+
+      <section class="gk-filters-card admin-card admin-card--full">
+        <h2 class="gk-panel-title">Новая роль доступа</h2>
+        <p class="gk-muted admin-card-desc">
+          Создание записи в каталоге: ресурс, название, риск и упорядоченная цепочка согласующих (один или несколько). Маршрут заявки по этой роли строится из этой цепочки.
+        </p>
+        @if (createError) {
+          <div class="gk-alert-error">{{ createError }}</div>
+        }
+        @if (createSuccess) {
+          <div class="admin-create-ok">{{ createSuccess }}</div>
+        }
+        <div class="admin-create-grid">
+          <label class="gk-field">
+            <span>Ресурс</span>
+            <select [(ngModel)]="newResourceId" name="res" class="gk-input">
+              <option value="">— выберите ресурс —</option>
+              @for (r of formResources; track r.id) {
+                <option [value]="r.id">{{ r.label }}</option>
+              }
+            </select>
+          </label>
+          <label class="gk-field">
+            <span>Название роли</span>
+            <input [(ngModel)]="newName" name="rn" type="text" class="gk-input" placeholder="Например, Аналитик отчётов" />
+          </label>
+          <label class="gk-field">
+            <span>Уровень риска</span>
+            <select [(ngModel)]="newRisk" name="risk" class="gk-input">
+              @for (lv of riskLevels; track lv) {
+                <option [value]="lv">{{ lv }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <label class="gk-field" style="margin-top: 1rem">
+          <span>Описание (необязательно)</span>
+          <input [(ngModel)]="newDescription" name="rd" type="text" class="gk-input" placeholder="Кратко, для каталога" />
+        </label>
+
+        <h3 class="admin-subtitle">Цепочка согласующих</h3>
+        <p class="gk-muted admin-card-desc" style="margin-top: 0">
+          Порядок шагов — сверху вниз. Можно назначить любого пользователя из каталога: найдите по логину (минимум 2 символа, без учёта регистра) и добавьте в цепочку.
+        </p>
+        <div class="admin-user-search">
+          <label class="gk-field admin-user-search-field">
+            <span>Поиск по логину</span>
+            <div class="admin-user-search-row">
+              <input
+                [(ngModel)]="userSearchQ"
+                name="usq"
+                type="search"
+                class="gk-input"
+                placeholder="например initiator"
+                autocomplete="off"
+                [disabled]="createBusy || userSearchLoading"
+                (keydown.enter)="searchUsersForChain()"
+              />
+              <button type="button" class="gk-btn-primary" [disabled]="createBusy || userSearchLoading" (click)="searchUsersForChain()">
+                {{ userSearchLoading ? '…' : 'Найти' }}
+              </button>
+            </div>
+          </label>
+          @if (userSearchError) {
+            <p class="gk-muted admin-user-search-msg">{{ userSearchError }}</p>
+          }
+          @if (userSearchHits.length) {
+            <ul class="admin-user-hits">
+              @for (h of userSearchHits; track h.id) {
+                <li>
+                  <span class="admin-user-hit-label">{{ h.full_name || h.login }} <span class="gk-login-tag">{{ h.login }}</span></span>
+                  <button
+                    type="button"
+                    class="gk-btn-ghost admin-user-hit-add"
+                    [disabled]="createBusy || isInApproverChain(h.id)"
+                    (click)="addUserToChain(h)"
+                  >
+                    {{ isInApproverChain(h.id) ? 'Уже в цепочке' : 'В цепочку' }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (approverChain.length === 0) {
+          <p class="gk-muted admin-chain-empty">Цепочка пуста.</p>
+        } @else {
+          <ol class="admin-approver-chain">
+            @for (a of approverChain; track a.id; let i = $index) {
+              <li>
+                <span class="admin-chain-step">Шаг {{ i + 1 }}</span>
+                <span class="admin-chain-name">{{ a.full_name || a.login }}</span>
+                <span class="gk-login-tag">{{ a.login }}</span>
+                <span class="admin-chain-actions">
+                  <button type="button" class="gk-btn-ghost admin-chain-btn" [disabled]="createBusy || i === 0" (click)="moveApprover(i, -1)" title="Выше">↑</button>
+                  <button
+                    type="button"
+                    class="gk-btn-ghost admin-chain-btn"
+                    [disabled]="createBusy || i === approverChain.length - 1"
+                    (click)="moveApprover(i, 1)"
+                    title="Ниже"
+                  >
+                    ↓
+                  </button>
+                  <button type="button" class="gk-btn-ghost admin-chain-btn" [disabled]="createBusy" (click)="removeApprover(i)">Убрать</button>
+                </span>
+              </li>
+            }
+          </ol>
+        }
+        <div class="gk-btn-row" style="margin-top: 1rem">
+          <button type="button" class="gk-btn-primary" [disabled]="createBusy" (click)="submitNewAccessRole()">
+            {{ createBusy ? '…' : 'Создать роль доступа' }}
+          </button>
+        </div>
+      </section>
+
+      <section class="gk-filters-card admin-card">
+        <h2 class="gk-panel-title">Маршруты согласования</h2>
+        <p class="gk-muted admin-card-desc">{{ data.workflow.description }}</p>
+        <ol class="admin-workflow">
+          @for (st of data.workflow.steps; track st.step) {
+            <li>
+              <span class="admin-wf-step">Шаг {{ st.step }}</span>
+              @if (st.login || st.full_name) {
+                <span class="admin-wf-name">{{ st.full_name || st.login }}</span>
+                @if (st.login) {
+                  <span class="gk-login-tag">{{ st.login }}</span>
+                }
+              } @else {
+                <span class="gk-muted">пользователь не найден в БД</span>
+              }
+            </li>
+          }
+        </ol>
+        <p class="gk-muted admin-note">Цепочка по умолчанию в коде — запасной вариант, если у роли нет записей в <code>access_role_approvers</code>.</p>
+      </section>
+
+      <section class="gk-filters-card admin-card admin-card--wide">
+        <h2 class="gk-panel-title">Метрики и логи</h2>
+        <div class="admin-metrics">
+          <div class="admin-metric">
+            <span class="admin-metric-val">{{ data.metrics.users_count }}</span>
+            <span class="admin-metric-label">Пользователей</span>
+          </div>
+          <div class="admin-metric">
+            <span class="admin-metric-val">{{ data.metrics.requests_count }}</span>
+            <span class="admin-metric-label">Заявок</span>
+          </div>
+          <div class="admin-metric">
+            <span class="admin-metric-val">{{ data.metrics.audit_entries_count }}</span>
+            <span class="admin-metric-label">Записей аудита</span>
+          </div>
+        </div>
+        <div class="admin-links-row">
+          <a routerLink="/audit" class="gk-btn-ghost">Журнал аудита</a>
+          <a class="gk-btn-ghost" href="/health" target="_blank" rel="noopener">Health</a>
+          <a class="gk-btn-ghost" href="/api/meta" target="_blank" rel="noopener">Meta</a>
+        </div>
+        <p class="gk-muted admin-note">Полные системные логи сервера — на уровне Docker / оркестратора; здесь — счётчики и ссылка на журнал приложения.</p>
+      </section>
+
+      <section class="gk-filters-card admin-card admin-card--full">
+        <h2 class="gk-panel-title">Роли пользователей (RBAC)</h2>
+        <p class="gk-muted admin-card-desc">Назначения ролей в таблицах <code>user_roles</code> / <code>rbac_roles</code>. Редактирование через БД или расширение API.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Логин</th>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Роли</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (u of data.users; track u.id) {
+                <tr>
+                  <td><span class="gk-login-tag">{{ u.login }}</span></td>
+                  <td>{{ u.full_name }}</td>
+                  <td class="admin-td-email">{{ u.email || '—' }}</td>
+                  <td>{{ u.roles || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  }
+</div>

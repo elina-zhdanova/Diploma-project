@@ -1,0 +1,14 @@
+<div
+  class="latech-logo"
+  [class.compact]="compact"
+  [class.compact-nav]="compactNav"
+  [class.variant-light]="variant === 'light'"
+  [class.variant-dark]="variant === 'dark'"
+  aria-label="IT Shop · LaTech style"
+>
+  <span class="latech-mark">{{ compact ? 'LT' : 'LT' }}</span>
+  <span class="latech-text">
+    <span class="latech-sub">{{ productLine }}</span>
+    <span class="latech-title">{{ titleLine }}</span>
+  </span>
+</div>

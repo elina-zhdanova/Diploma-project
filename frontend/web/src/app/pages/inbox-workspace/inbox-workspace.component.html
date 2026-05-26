@@ -1,0 +1,29 @@
+<div class="gk-page requests-workspace-page">
+  <div
+    #gridRef
+    class="requests-workspace-grid"
+    [class.requests-workspace-split]="hasDetail"
+  >
+    <div class="requests-workspace-list">
+      <app-inbox />
+    </div>
+    @if (hasDetail) {
+      <div
+        class="requests-workspace-resizer"
+        role="separator"
+        tabindex="0"
+        aria-orientation="vertical"
+        aria-label="Изменить ширину панели заявки"
+        (pointerdown)="onResizerPointerDown($event)"
+        (keydown)="onResizerKeydown($event)"
+      ></div>
+      <aside
+        class="requests-workspace-detail"
+        [style.width.px]="detailWidthPx"
+        aria-label="Просмотр заявки"
+      >
+        <router-outlet />
+      </aside>
+    }
+  </div>
+</div>

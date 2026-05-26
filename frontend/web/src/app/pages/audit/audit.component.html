@@ -1,0 +1,98 @@
+<div class="gk-page audit-page">
+  <header class="gk-page-header-strip">
+    <h1 class="gk-page-title">Журнал аудита</h1>
+    <p class="gk-muted" style="margin: 0">
+      Регистрация действий пользователей, привязка к заявкам, поиск и сводка по типам событий для анализа безопасности.
+    </p>
+  </header>
+
+  @if (error) {
+    <div class="gk-alert-error">{{ error }}</div>
+  }
+
+  <section class="gk-filters-card audit-filters">
+    <h2 class="gk-filters-title">Фильтрация и поиск</h2>
+    <div class="audit-filter-grid">
+      <div>
+        <label class="gk-label" for="audit-q">Текст (действие, JSON-поля)</label>
+        <input id="audit-q" class="gk-input" type="search" [(ngModel)]="searchQ" name="aq" placeholder="approval, request_id, login…" />
+      </div>
+      <div>
+        <label class="gk-label" for="audit-user">Пользователь (UUID для фильтра)</label>
+        <input id="audit-user" class="gk-input" [(ngModel)]="filterUserId" name="au" placeholder="uuid в БД — опционально" />
+      </div>
+      <div>
+        <label class="gk-label" for="audit-req">ID заявки</label>
+        <input id="audit-req" class="gk-input" [(ngModel)]="filterRequestId" name="ar" placeholder="uuid — опционально" />
+      </div>
+    </div>
+    <div class="audit-filter-actions">
+      <button type="button" class="gk-btn-primary" [disabled]="loading" (click)="applyFilters()">
+        {{ loading ? 'Загрузка…' : 'Применить' }}
+      </button>
+      <button type="button" class="gk-btn-ghost" [disabled]="loading" (click)="clearFilters()">Сбросить</button>
+    </div>
+  </section>
+
+  @if (!loading && categoryCounts.length) {
+    <section class="gk-filters-card audit-ib-panel">
+      <h2 class="gk-panel-title">Анализ событий (по текущей выборке)</h2>
+      <p class="gk-muted audit-ib-hint">Распределение по префиксу действия — для обзора активности и точек контроля ИБ.</p>
+      <div class="audit-ib-chips">
+        @for (c of categoryCounts; track c.key) {
+          <span class="audit-ib-chip">{{ c.label }}: <strong>{{ c.count }}</strong></span>
+        }
+      </div>
+    </section>
+  }
+
+  @if (loading) {
+    <div class="audit-loading">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка журнала…</span>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="gk-empty">Записей не найдено. Измените фильтры или выполните действия в системе (вход, заявки, согласование).</div>
+  } @else {
+    <div class="audit-table-wrap">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Время (UTC)</th>
+            <th>Действие</th>
+            <th>Пользователь</th>
+            <th>Заявка</th>
+            <th>Детали</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of items; track row.id) {
+            <tr>
+              <td class="audit-td-time">{{ formatWhen(row.created_at) }}</td>
+              <td><span [class]="actionClass(row.action)">{{ row.action }}</span></td>
+              <td class="audit-td-user">{{ row.user_login }}</td>
+              <td class="audit-td-req">
+                @if (row.request_id) {
+                  <a [routerLink]="['/requests', row.request_id]" class="audit-req-link">{{ shortId(row.request_id) }}</a>
+                } @else {
+                  —
+                }
+              </td>
+              <td class="audit-td-details">
+                @if (row.details && (detailsJson(row.details) || '').length) {
+                  <details class="audit-details">
+                    <summary>JSON</summary>
+                    <pre class="audit-pre">{{ detailsJson(row.details) }}</pre>
+                  </details>
+                } @else {
+                  —
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="gk-muted audit-footnote">Показано до 200 последних записей, соответствующих фильтрам. История изменений заявок отражается в событиях <code>request.*</code> и <code>approval.*</code>.</p>
+  }
+</div>

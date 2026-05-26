@@ -1,0 +1,98 @@
+.requests-workspace-page {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: calc(100vh - var(--gk-nav-h) - var(--gk-nav-mobile-extra) - 2.5rem);
+}
+
+@media (min-width: 640px) {
+  .requests-workspace-page {
+    min-height: calc(100vh - var(--gk-nav-h) - 2.5rem);
+  }
+}
+
+.requests-workspace-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.requests-workspace-resizer {
+  display: none;
+}
+
+/* Пока заявка не выбрана — только список на всю ширину */
+.requests-workspace-grid:not(.requests-workspace-split) .requests-workspace-list {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  border-right: none;
+  padding-right: 0;
+}
+
+@media (min-width: 900px) {
+  .requests-workspace-grid {
+    flex-direction: row;
+    min-height: calc(100vh - 6rem);
+  }
+
+  .requests-workspace-grid.requests-workspace-split .requests-workspace-list {
+    flex: 1 1 auto;
+    min-width: 12.5rem;
+    overflow-y: auto;
+    padding-right: 0;
+    border-right: none;
+  }
+
+  .requests-workspace-grid.requests-workspace-split .requests-workspace-resizer {
+    display: block;
+    flex: 0 0 6px;
+    align-self: stretch;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: var(--gk-zinc-800);
+    cursor: col-resize;
+    touch-action: none;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      background: var(--gk-zinc-600);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--gk-accent, #38bdf8);
+      outline-offset: -2px;
+    }
+  }
+
+  .requests-workspace-grid.requests-workspace-split .requests-workspace-detail {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 899px) {
+  .requests-workspace-grid.requests-workspace-split .requests-workspace-detail {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    border-top: 1px solid var(--gk-zinc-800);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    min-height: 40vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}

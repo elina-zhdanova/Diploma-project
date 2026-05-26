@@ -1,0 +1,119 @@
+<div class="my-requests-pane list-page">
+  <header class="gk-page-header-strip">
+    <p class="gk-eyebrow">Заявки</p>
+    <h1 class="gk-page-title">Мои заявки</h1>
+    <p class="gk-muted" style="margin: 0">Заявки, которые вы создали как инициатор.</p>
+  </header>
+
+  @if (submittedNotice) {
+    <div class="gk-success-banner" style="margin-bottom: 1.5rem">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+      @if (submittedCount > 1) {
+        Создано отдельных заявок: {{ submittedCount }}. Они отображаются в списке ниже.
+      } @else {
+        Заявка отправлена на согласование. Ниже — актуальный список.
+      }
+    </div>
+  }
+
+  @if (error) {
+    <div class="gk-alert-error">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 2rem 0">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка…</span>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="gk-empty">
+      Пока нет заявок. Перейдите в <a routerLink="/store" style="color: var(--gk-accent); font-weight: 600">каталог</a> и оформите доступ.
+    </div>
+  } @else {
+    <div class="my-req-search-row">
+      <input
+        id="my-req-search"
+        class="gk-input my-req-search-input"
+        type="search"
+        name="myreqq"
+        [(ngModel)]="searchQuery"
+        placeholder="Поиск по логину, ФИО, ролям доступа…"
+        autocomplete="off"
+        aria-label="Поиск по логину, ФИО и ролям доступа"
+      />
+      @if (searchQuery.trim()) {
+        <span class="my-req-search-count gk-muted">{{ filteredItems.length }} из {{ items.length }}</span>
+      }
+    </div>
+
+    @if (filteredItems.length === 0) {
+      <div class="gk-empty my-req-filter-empty" role="status">Ничего не найдено. Измените запрос.</div>
+    } @else {
+    @for (r of filteredItems; track r.id) {
+      <a
+        [routerLink]="['/requests', r.id]"
+        routerLinkActive="gk-req-card--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="gk-req-card"
+      >
+        <div class="gk-req-card-inner">
+          <h3 class="my-req-title">{{ requestTitle(r) }}</h3>
+          <p class="my-req-initiator">
+            <span class="my-req-initiator-label">Запросил доступ</span>
+            <span class="my-req-initiator-body">
+              <strong>{{ initiatorLabel(r) }}</strong>
+              @if (showInitiatorLoginTag(r)) {
+                <span class="gk-login-tag">{{ r.initiator_login }}</span>
+              }
+            </span>
+          </p>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.75rem">
+            <span [class]="statusPillClass(r.status)">{{ r.status }}</span>
+            @if (r.risk_score != null && r.risk_score !== undefined) {
+              <span class="gk-muted">риск {{ r.risk_score | number: '1.0-2' }}</span>
+            }
+          </div>
+          @if (r.created_at) {
+            <p style="margin: 0 0 0.5rem; font-size: 0.875rem; color: var(--gk-zinc-300)">{{ formatWhen(r.created_at) }}</p>
+          }
+          @if (r.needed_until) {
+            <p class="gk-muted my-req-needed" style="margin: 0 0 0.5rem; font-size: 0.8125rem">
+              Нужен до <strong>{{ formatDateShort(r.needed_until) }}</strong>
+            </p>
+          }
+          @if (r.justification) {
+            <p style="margin: 0; font-size: 0.9375rem; line-height: 1.5; color: var(--gk-zinc-300); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden">
+              {{ r.justification }}
+            </p>
+          }
+        </div>
+        @if ((r.status || '').toLowerCase() === 'pending') {
+          <div class="gk-progress-wrap">
+            <p class="gk-muted my-req-progress-caption" style="margin: 0 0 0.5rem; font-size: 0.8125rem">
+              На согласовании
+              @if ((r.approvals_total ?? 0) > 0) {
+                — {{ r.approvals_done ?? 0 }} из {{ r.approvals_total }} шагов
+              }
+            </p>
+            <div
+              class="gk-progress-bar"
+              role="progressbar"
+              [attr.aria-valuenow]="approvalProgressPercent(r)"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-label]="
+                'Прогресс согласования: ' + approvalProgressPercent(r) + ' процентов'
+              "
+            >
+              <div class="gk-progress-fill" [style.width.%]="approvalProgressPercent(r)"></div>
+            </div>
+          </div>
+        }
+      </a>
+    }
+    }
+  }
+</div>

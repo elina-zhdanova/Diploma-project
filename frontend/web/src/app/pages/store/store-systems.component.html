@@ -1,0 +1,88 @@
+<div class="gk-page store-page">
+  <header class="gk-page-header-strip">
+    <p class="gk-eyebrow">Каталог доступов</p>
+    <h1 class="gk-page-title">Информационные системы</h1>
+    <div class="gk-badge-count">
+      @if (loading) {
+        Загрузка…
+      } @else {
+        Систем в списке: {{ filteredSystems.length }}
+      }
+    </div>
+  </header>
+
+  @if (error) {
+    <div class="gk-alert-error">{{ error }}</div>
+  }
+
+  <section class="gk-filters-card store-toolbar">
+    <h2 class="gk-filters-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      Поиск
+    </h2>
+
+    <div class="store-filter-text-block">
+      <label class="gk-label" for="store-q-systems">Поиск по системам и группам доступа</label>
+      <div class="gk-input-search-wrap">
+        <svg class="gk-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          id="store-q-systems"
+          class="gk-input"
+          type="search"
+          [ngModel]="ui.searchQuery()"
+          (ngModelChange)="ui.setSearch($event)"
+          name="q"
+          placeholder="Система, ресурс или группа доступа…"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <p class="gk-muted store-toolbar-footnote">
+      Поиск сохраняется между визитами и учитывает названия систем, ресурсов и групп доступа. Откройте систему, чтобы выбрать роли и добавить их в корзину.
+    </p>
+  </section>
+
+  @if (loading) {
+    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 2rem 0">
+      <span class="gk-spinner" aria-hidden="true"></span>
+      <span class="gk-muted">Загрузка каталога…</span>
+    </div>
+  } @else if (filteredSystems.length === 0) {
+    <div class="gk-empty">Ничего не найдено. Измените поисковый запрос.</div>
+  } @else {
+    <div class="store-systems-grid">
+      @for (sys of filteredSystems; track sys.id) {
+        <a [routerLink]="['/store/system', sys.id]" class="gk-access-card store-system-card">
+          <div class="gk-access-card-head">
+            <div class="gk-access-card-titleblock">
+              <div class="gk-access-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <div class="gk-access-titles">
+                <h3>{{ sys.name }}</h3>
+              </div>
+            </div>
+          </div>
+          @if (sys.description) {
+            <p class="gk-access-desc" style="margin: 0; -webkit-line-clamp: 2">{{ sys.description }}</p>
+          }
+          <p class="store-system-meta">Ролей доступа: {{ roleCount(sys) }}</p>
+          <div class="gk-access-footer">
+            <span class="gk-muted">Открыть список →</span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>
