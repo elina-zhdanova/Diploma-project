@@ -7,7 +7,7 @@
 ```text
 itshop/
   backend/           # Go API + sqlc + миграции
-  deploy/            # docker-compose: postgres, minio, api, web
+  deploy/            # docker-compose: postgres, web
   frontend/web/      # Angular 19 MVP
 ```
 
@@ -24,8 +24,6 @@ docker compose up -d --build
 | Health | http://localhost:8081/health |
 | Angular web | http://localhost:4200 |
 | PostgreSQL | localhost:5433 (`itshop` / `itshop` / `itshop`) |
-| MinIO API | http://localhost:9000 |
-| MinIO Console | http://localhost:9001 (`minioadmin` / `minioadmin`) |
 
 ## Frontend (Angular)
 
