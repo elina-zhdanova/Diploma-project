@@ -1,4 +1,4 @@
-﻿# IT Shop (Angular + Go + PostgreSQL + MinIO)
+﻿# IT Shop (Angular + Go + PostgreSQL)
 
 ## Структура
 
