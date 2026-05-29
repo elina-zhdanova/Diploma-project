@@ -1,4 +1,4 @@
-﻿# IT Shop — каркас по ТЗ (Angular + Go + PostgreSQL + MinIO)
+﻿# IT Shop (Angular + Go + PostgreSQL + MinIO)
 
 ## Структура
 
